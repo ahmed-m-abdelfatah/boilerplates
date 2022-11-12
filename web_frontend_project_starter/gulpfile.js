@@ -21,7 +21,7 @@ const paths = {
 const sources = {
   html: [`${paths.src}/**/!(_)*.pug`, `${paths.src}/**/!(_)*.html`],
   img: [`${paths.src}/assets/img/**/!(_)*.+(png|jpg|jpeg|gif|svg|ico)`],
-  css: [`${paths.src}/assets/styles**/!(_)*.{css,scss}`],
+  css: [`${paths.src}/assets/styles/**/!(_)*.+(css|scss)`],
   js: [`${paths.src}/assets/js/**/!(_)*.js`],
   dist: [`${paths.build}/**/*.*`, './README.md'],
 };
@@ -52,7 +52,7 @@ gulp.task(tasks.connect, (done, root = paths.build) => {
 // handel html
 gulp.task(tasks.html, (_, dest = paths.build) => {
   return gulp
-    .src(sources.html, { since: gulp.lastRun(tasks.html) })
+    .src(sources.html)
     .pipe(plumber())
     .pipe(pug({ pretty: false }))
     .pipe(gulp.dest(dest))
@@ -61,23 +61,18 @@ gulp.task(tasks.html, (_, dest = paths.build) => {
 
 // handel images
 gulp.task(tasks.img, (_, dest = `${paths.build}/assets/img`) => {
-  return gulp
-    .src(sources.img, { since: gulp.lastRun(tasks.img) })
-    .pipe(plumber())
-    .pipe(imagemin())
-    .pipe(gulp.dest(dest))
-    .pipe(connect.reload());
+  return gulp.src(sources.img).pipe(plumber()).pipe(imagemin()).pipe(gulp.dest(dest)).pipe(connect.reload());
 });
 
 // handel css
 gulp.task(tasks.css, (_, dest = `${paths.build}/assets/css`) => {
   return gulp
-    .src(sources.css, { since: gulp.lastRun(tasks.css) })
+    .src(sources.css)
     .pipe(plumber())
     .pipe(sourcemaps.init())
+    .pipe(concat('all.min.css'))
     .pipe(sass.sync({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(autoPrefixer({ cascade: true }))
-    .pipe(concat('all.min.css'))
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(dest))
     .pipe(connect.reload());
