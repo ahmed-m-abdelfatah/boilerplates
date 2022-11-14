@@ -90,8 +90,8 @@ gulp.task(tasks.css, (_, dest = `${paths.build}/assets/css`) => {
    * In css task we use that method to stop duplicates in all.min.css
    * this for watching only: _*.+(css|scss)
    * this for watching & compiling only: !(_)*.+(css|scss)
+   * console.log(sources.css.filter(item => !item.includes('_*')));
    */
-  console.log(sources.css.filter(item => !item.includes('_*')));
 
   return gulp
     .src(sources.css.filter(item => !item.includes('_*')))
