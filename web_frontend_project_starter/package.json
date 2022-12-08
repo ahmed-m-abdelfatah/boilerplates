@@ -1,23 +1,20 @@
 {
-  "name": "Project Starter",
-  "version": "1.0.0",
-  "description": "Project Starter",
-  "main": "gulpfile.js",
-  "scripts": {
-    "dev": "gulp",
-    "build": "gulp final"
-  },
-  "keywords": [],
   "author": {
-    "name": "Ahmed Abdelfatah",
-    "Linkedin": "https://www.linkedin.com/in/ahmed-m-abdelfatah"
+    "Linkedin": "https://www.linkedin.com/in/ahmed-m-abdelfatah",
+    "name": "Ahmed Abdelfatah"
   },
-  "license": "ISC",
+  "browserslist": [
+    "last 4 versions",
+    "> 2%",
+    "IE 10"
+  ],
+  "description": "Project Starter",
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-connect": "^5.7.0",
+    "gulp-htmlmin": "^5.0.1",
     "gulp-imagemin": "^7.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-pug": "^5.0.0",
@@ -27,9 +24,13 @@
     "gulp-zip": "^5.1.0",
     "sass": "^1.56.1"
   },
-  "browserslist": [
-    "last 4 versions",
-    "> 2%",
-    "IE 10"
-  ]
+  "keywords": [],
+  "license": "ISC",
+  "main": "gulpfile.js",
+  "name": "Project Starter",
+  "scripts": {
+    "build": "gulp final",
+    "dev": "gulp"
+  },
+  "version": "1.0.0"
 }

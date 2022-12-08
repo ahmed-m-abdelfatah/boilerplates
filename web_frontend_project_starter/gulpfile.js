@@ -9,7 +9,8 @@ const gulp = require('gulp'),
       imagemin = require('gulp-imagemin'),
       plumber = require('gulp-plumber'),
       zip = require('gulp-zip'),
-      uglify = require('gulp-uglify');
+      uglify = require('gulp-uglify'),
+      htmlmin = require('gulp-htmlmin');
 
 const paths = {
   src: './src',
@@ -18,7 +19,7 @@ const paths = {
 };
 
 const sources = {
-  html: [`${paths.src}/**/_*.+(pug|html)`, `${paths.src}/**/!(_)*.+(pug|html)`],
+  html: [`${paths.src}/**/_*.+(pug|html)`, `${paths.src}/**/!(_)*.+(html)`, `${paths.src}/**/!(_)*.+(pug)`],
   fonts: [`${paths.src}/assets/fonts/*.*`, `${paths.src}/assets/webfonts/*.*`],
   img: [`${paths.src}/assets/img/**/!(_)*.+(png|jpg|jpeg|gif|svg|ico)`],
   css: [`${paths.src}/assets/styles/**/_*.+(css|scss)`, `${paths.src}/assets/styles/**/!(_)*.+(css|scss)`],
@@ -52,19 +53,28 @@ gulp.task(tasks.connect, (done, root = paths.build) => {
 });
 
 // handel html
-gulp.task(tasks.html, (_, dest = paths.build) => {
+gulp.task(tasks.html, (done, dest = paths.build) => {
   /**
    * this for watching only: _*.+(pug|html)
    * this for watching & compiling only: !(_)*.+(pug|html)
    * console.log(sources.html.filter(item => !item.includes('_*')));
    */
 
-  return gulp
-    .src(sources.html.filter(item => !item.includes('_*')))
+  gulp
+    .src([sources.html[1]])
+    .pipe(plumber())
+    .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(gulp.dest(dest));
+
+  gulp
+    .src([sources.html[2]])
     .pipe(plumber())
     .pipe(pug({ pretty: false }))
-    .pipe(gulp.dest(dest))
-    .pipe(connect.reload());
+    .pipe(gulp.dest(dest));
+
+  gulp.src(sources.html).pipe(connect.reload());
+
+  done();
 });
 
 // handel fonts
