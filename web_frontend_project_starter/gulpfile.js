@@ -37,6 +37,7 @@ const tasks = {
   start: 'start',
   watch: 'watch',
   default: 'default',
+  final: 'final',
 };
 
 // connect to server
@@ -125,16 +126,16 @@ gulp.task(tasks.dist, (_, dest = paths.dist) => {
 
 // watch files
 gulp.task(tasks.watch, done => {
-  gulp.watch(sources.html, gulp.series(tasks.html, tasks.img));
+  gulp.watch(sources.html, gulp.series(tasks.html));
+  gulp.watch(sources.fonts, gulp.series(tasks.fonts));
   gulp.watch(sources.css, gulp.series(tasks.css));
   gulp.watch(sources.img, gulp.series(tasks.img));
   gulp.watch(sources.js, gulp.series(tasks.js));
-  gulp.watch(sources.dist, gulp.series(tasks.dist));
-  gulp.watch(sources.fonts, gulp.series(tasks.fonts));
 
   done();
 });
 
 // starting
-gulp.task(tasks.start, gulp.series(tasks.html, tasks.fonts, tasks.img, tasks.css, tasks.css));
-gulp.task(tasks.default, gulp.parallel('connect', 'watch', 'start'));
+gulp.task(tasks.start, gulp.series(tasks.html, tasks.fonts, tasks.img, tasks.css, tasks.js));
+gulp.task(tasks.final, gulp.series(tasks.html, tasks.fonts, tasks.img, tasks.css, tasks.js, tasks.dist));
+gulp.task(tasks.default, gulp.parallel(tasks.connect, tasks.watch, tasks.start));

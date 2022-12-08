@@ -4,7 +4,8 @@
   "description": "Project Starter",
   "main": "gulpfile.js",
   "scripts": {
-    "dev": "gulp"
+    "dev": "gulp",
+    "build": "gulp final"
   },
   "keywords": [],
   "author": {
