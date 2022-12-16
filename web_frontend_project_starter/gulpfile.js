@@ -2,7 +2,7 @@
 const gulp = require('gulp'),
       sass = require('gulp-sass')(require('sass')),
       autoPrefixer = require('gulp-autoprefixer'),
-      sourcemaps = require('gulp-sourcemaps'),
+      // sourcemaps = require('gulp-sourcemaps'),
       concat = require('gulp-concat'),
       connect = require('gulp-connect'),
       pug = require('gulp-pug'),
@@ -20,20 +20,24 @@ const paths = {
 
 const sources = {
   html: [`${paths.src}/**/_*.+(pug|html)`, `${paths.src}/**/!(_)*.+(html)`, `${paths.src}/**/!(_)*.+(pug)`],
-  fonts: [`${paths.src}/assets/fonts/*.*`, `${paths.src}/assets/webfonts/*.*`],
   img: [`${paths.src}/assets/img/**/!(_)*.+(png|jpg|jpeg|gif|svg|ico)`],
-  css: [`${paths.src}/assets/styles/**/_*.+(css|scss)`, `${paths.src}/assets/styles/**/!(_)*.+(css|scss)`],
+  css: [
+    `${paths.src}/assets/styles/**/_*.+(css|scss)`,
+    `${paths.src}/assets/styles/**/!(_)*.+(css|scss)`,
+    `${paths.src}/assets/styles/**/!(_)*.rtl.+(css|scss)`,
+  ],
   js: [`${paths.src}/assets/js/**/*.js`],
+  lib: [`${paths.src}/assets/lib/**/*.*`],
   dist: [`${paths.build}/**/*.*`, './README.md'],
 };
 
 const tasks = {
   connect: 'connect',
   html: 'html',
-  fonts: 'fonts',
   img: 'img',
   css: 'css',
   js: 'js',
+  lib: 'lib',
   dist: 'dist',
   start: 'start',
   watch: 'watch',
@@ -77,26 +81,13 @@ gulp.task(tasks.html, (done, dest = paths.build) => {
   done();
 });
 
-// handel fonts
-gulp.task(tasks.fonts, (done, dest = [`${paths.build}/assets/fonts`, `${paths.build}/assets/webfonts`]) => {
-  for (let i = 0; i < dest.length; i++) {
-    // prettier-ignore
-    gulp
-      .src(sources.fonts[i])
-      .pipe(gulp.dest(dest[i]))
-      .pipe(connect.reload());
-  }
-
-  done();
-});
-
-// handel images
+// handel img
 gulp.task(tasks.img, (_, dest = `${paths.build}/assets/img`) => {
   return gulp.src(sources.img).pipe(plumber()).pipe(imagemin()).pipe(gulp.dest(dest)).pipe(connect.reload());
 });
 
 // handel css
-gulp.task(tasks.css, (_, dest = `${paths.build}/assets/css`) => {
+gulp.task(tasks.css, (done, dest = `${paths.build}/assets/css`) => {
   /**
    * In css task we use that method to stop duplicates in all.min.css
    * this for watching only: _*.+(css|scss)
@@ -104,32 +95,53 @@ gulp.task(tasks.css, (_, dest = `${paths.build}/assets/css`) => {
    * console.log(sources.css.filter(item => !item.includes('_*')));
    */
 
-  return gulp
-    .src(sources.css.filter(item => !item.includes('_*')))
+  // ltr
+  gulp
+    .src(sources.css[1])
     .pipe(plumber())
-    .pipe(sourcemaps.init())
+    // .pipe(sourcemaps.init())
     .pipe(concat('all.min.css'))
     .pipe(sass.sync({ outputStyle: 'compressed' }).on('error', sass.logError))
     .pipe(autoPrefixer({ cascade: true }))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dest))
-    .pipe(connect.reload());
+    // .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(dest));
+
+  // rtl
+  gulp
+    .src(sources.css[2])
+    .pipe(plumber())
+    // .pipe(sourcemaps.init())
+    .pipe(concat('all.rtl.min.css'))
+    .pipe(sass.sync({ outputStyle: 'compressed' }).on('error', sass.logError))
+    .pipe(autoPrefixer({ cascade: true }))
+    // .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(dest));
+
+  gulp.src(sources.css).pipe(connect.reload());
+  done();
 });
 
 // handel js
 gulp.task(tasks.js, (_, dest = `${paths.build}/assets/js`) => {
-  return gulp
-    .src(sources.js)
-    .pipe(plumber())
-    .pipe(sourcemaps.init())
-    .pipe(concat('all.min.js'))
-    .pipe(uglify())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dest))
-    .pipe(connect.reload());
+  return (
+    gulp
+      .src(sources.js)
+      .pipe(plumber())
+      // .pipe(sourcemaps.init())
+      .pipe(concat('all.min.js'))
+      .pipe(uglify())
+      // .pipe(sourcemaps.write('.'))
+      .pipe(gulp.dest(dest))
+      .pipe(connect.reload())
+  );
 });
 
-// make compressed version to the client
+// handel lib
+gulp.task(tasks.lib, (_, dest = `${paths.build}/assets/lib`) => {
+  return gulp.src(sources.lib).pipe(gulp.dest(dest)).pipe(connect.reload());
+});
+
+// handel dist
 gulp.task(tasks.dist, (_, dest = paths.dist) => {
   return gulp.src(sources.dist).pipe(zip('website.zip')).pipe(gulp.dest(dest));
 });
@@ -137,15 +149,15 @@ gulp.task(tasks.dist, (_, dest = paths.dist) => {
 // watch files
 gulp.task(tasks.watch, done => {
   gulp.watch(sources.html, gulp.series(tasks.html));
-  gulp.watch(sources.fonts, gulp.series(tasks.fonts));
-  gulp.watch(sources.css, gulp.series(tasks.css));
   gulp.watch(sources.img, gulp.series(tasks.img));
+  gulp.watch(sources.css, gulp.series(tasks.css));
   gulp.watch(sources.js, gulp.series(tasks.js));
+  gulp.watch(sources.lib, gulp.series(tasks.lib));
 
   done();
 });
 
 // starting
-gulp.task(tasks.start, gulp.series(tasks.html, tasks.fonts, tasks.img, tasks.css, tasks.js));
-gulp.task(tasks.final, gulp.series(tasks.html, tasks.fonts, tasks.img, tasks.css, tasks.js, tasks.dist));
+gulp.task(tasks.start, gulp.series(tasks.html, tasks.img, tasks.css, tasks.js, tasks.lib));
+gulp.task(tasks.final, gulp.series(tasks.html, tasks.img, tasks.css, tasks.js, tasks.lib, tasks.dist));
 gulp.task(tasks.default, gulp.parallel(tasks.connect, tasks.watch, tasks.start));

@@ -27,10 +27,10 @@
   "keywords": [],
   "license": "ISC",
   "main": "gulpfile.js",
-  "name": "Project Starter",
+  "name": "arab_bureau",
   "scripts": {
-    "build": "gulp final",
-    "dev": "gulp"
+    "dev": "gulp",
+    "final": "gulp final"
   },
   "version": "1.0.0"
 }
