@@ -1,0 +1,272 @@
+{
+  // aaAddRouter
+  "Node.js Using Import Add Router": {
+    "prefix": "aaAddRouter",
+    "body": [
+      "import express from 'express';",
+      "import validation from '../../middleware/validation.js';",
+      "import * as validators from './${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.validation.schema.js';",
+      "import { auth } from '../../middleware/auth.js';",
+      "import endPoint from './${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.end.point.js';",
+      "import { multerUpload, uploadFilePath, uploadFileValidation, handelMulterError } from'../../services/multer.upload.js';",
+      "import * as controller from './${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.controller.js';",
+      "",
+      "const router = express.Router();",
+      "$2",
+      "export default router;"
+    ],
+    "description": "Node.js Using Import Add Router"
+  },
+  "Node.js Using Require Add Router": {
+    "prefix": "aaAddRouter",
+    "body": [
+      "const express = require('express');",
+      "const validation = require('../../middleware/validation.js');",
+      "const validators = require('./${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.validation.schema.js');",
+      "const { auth } = require('../../middleware/auth.js');",
+      "const endPoint = require('./${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.end.point.js');",
+      "const { multerUpload, uploadFilePath, uploadFileValidation, handelMulterError } = require('../../services/multer.upload.js');",
+      "const controller = require('./${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}.controller.js');",
+      "",
+      "const router = express.Router();",
+      "$2",
+      "module.exports = router;"
+    ],
+    "description": "Node.js Using Require Add Router"
+  },
+
+  // aaAddController
+  "Node.js Using Import Add Controller": {
+    "prefix": "aaAddController",
+    "body": [
+      "export const ${1:controller} = async (req, res) => {",
+      "try {",
+      "$2",
+      "} catch (error) {",
+      "res.status(500).json({ message: 'Internal Server Error', error });",
+      "}",
+      "};"
+    ],
+    "description": "Node.js Using Import Add Controller"
+  },
+  "Node.js Using Require Add Controller": {
+    "prefix": "aaAddController",
+    "body": [
+      "module.exports.${1:controller} = async (req, res) => {",
+      "try {",
+      "$2",
+      "} catch (error) {",
+      "res.status(500).json({ message: 'Internal Server Error', error });",
+      "}",
+      "};"
+    ],
+    "description": "Node.js Using Require Add Controller"
+  },
+
+  // aaAddMongooseModel
+  "Node.js Using Import Add Mongoose Model": {
+    "prefix": "aaAddMongooseModel",
+    "body": [
+      "import mongoose from 'mongoose';",
+      "",
+      "const ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Schema = new mongoose.Schema(",
+      "{",
+      "$2",
+      "},",
+      "{ timestamps: true },",
+      ");",
+      "",
+      "const ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Model = mongoose.model('${TM_FILENAME/([a-zA-Z0-9]+).*/${1:/pascalcase}/}', ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Schema);",
+      "export default ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Model;"
+    ],
+    "description": "Node.js Using Import Add Mongoose Model"
+  },
+  "Node.js Using Require Add Mongoose Model": {
+    "prefix": "aaAddMongooseModel",
+    "body": [
+      "const mongoose = require('mongoose');",
+      "",
+      "const ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Schema = new mongoose.Schema(",
+      "{",
+      "$2",
+      "},",
+      "{ timestamps: true },",
+      ");",
+      "",
+      "const ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Model = mongoose.model('${TM_FILENAME/([a-zA-Z0-9]+).*/${1:/pascalcase}/}', ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Schema);",
+      "module.exports = ${TM_FILENAME/([a-zA-Z0-9]+).*/$1/}Model;"
+    ],
+    "description": "Node.js Using Require Add Mongoose Model"
+  },
+
+  // aaAddApp
+  "Node.js Using Import Add Express App": {
+    "prefix": "aaAddApp",
+    "body": [
+      "import './get.env.js';",
+      "import express from 'express';",
+      "import runningCors from './services/cors.js';",
+      "import runningRateLimit from './services/rate.limit.js';",
+      "import appRoutes from './app.routes.js';",
+      "import connectDB from './DB/connect.db.js';",
+      "import swaggerDocs from './swagger/swagger.js';",
+      "import socketInit from './services/socket.init.js';",
+      "import cornJobs from './services/cron.jobs.js';",
+      "",
+      "const port = process.env.PORT;",
+      "const app = express();",
+      "",
+      "runningCors(app);",
+      "runningRateLimit(app);",
+      "appRoutes(app);",
+      "",
+      "const localDB = process.env.DB_LOCAL_URI;",
+      "const globalDB = process.env.DB_GLOBAL_URI;",
+      "",
+      "connectDB(localDB);",
+      "// connectDB(globalDB);",
+      "",
+      "const server = app.listen(port, () => {",
+      "  console.log('running......', port);",
+      "",
+      "  /**",
+      "   // start swagger docs",
+      "   // NOTE",
+      "   * 1. don't make 2 end points end with the same name [add product = /add and add comment = /add] because the stupid converter will render the second one it should be [add product = product/add and add comment = comment/add]",
+      "   */",
+      "  require('./swagger/postman_to_swagger.js');",
+      "  swaggerDocs(app, ['./swagger/swagger.yaml']);",
+      "});",
+      "",
+      "socketInit(server);",
+      "cornJobs();"
+    ],
+    "description": "Node.js Using Import Add Express App"
+  },
+  "Node.js Using Require Add Express App": {
+    "prefix": "aaAddApp",
+    "body": [
+      "require('dotenv').config({ path: '.env.local' });",
+      "const express = require('express');",
+      "const runningCors = require('./services/cors.js');",
+      "const runningRateLimit = require('./services/rate.limit.js');",
+      "const appRoutes = require('./app.routes.js');",
+      "const connectDB = require('./DB/connect.db.js');",
+      "const swaggerDocs = require('./swagger/swagger.js');",
+      "const socketInit = require('./services/socket.init.js');",
+      "const cornJobs = require('./services/cron.jobs.js');",
+      "",
+      "const port = process.env.PORT;",
+      "const app = express();",
+      "",
+      "runningCors(app);",
+      "runningRateLimit(app);",
+      "appRoutes(app);",
+      "",
+      "const localDB = process.env.DB_LOCAL_URI;",
+      "const globalDB = process.env.DB_GLOBAL_URI;",
+      "",
+      "connectDB(localDB);",
+      "// connectDB(globalDB);",
+      "",
+      "const server = app.listen(port, () => {",
+      "  console.log('running......', port);",
+      "",
+      "  /**",
+      "   // start swagger docs",
+      "   // NOTE",
+      "   * 1. don't make 2 end points end with the same name [add product = /add and add comment = /add] because the stupid converter will render the second one it should be [add product = product/add and add comment = comment/add]",
+      "   */",
+      "  require('./swagger/postman_to_swagger.js');",
+      "  swaggerDocs(app, ['./swagger/swagger.yaml']);",
+      "});",
+      "",
+      "socketInit(server);",
+      "cornJobs();"
+    ],
+    "description": "Node.js Using Require Add Express App"
+  },
+
+  // aaAddAppRoutes
+  "Node.js Using Import Add Express App Routes": {
+    "prefix": "aaAddAppRoutes",
+    "body": [
+      "import express from 'express';",
+      "import path from 'path';",
+      "import * as indexRouter from './modules/index.router.js';",
+      "",
+      "function appRoutes(app) {",
+      "\tapp.use(express.json());",
+      "\tapp.use('/uploads', express.static(path.join(__dirname, './uploads')));",
+      "\tapp.use(process.env.CHANNEL + '/auth', indexRouter.authRouter);",
+      "}",
+      "",
+      "export default appRoutes;"
+    ],
+    "description": "Node.js Using Import Add Express App Routes"
+  },
+  "Node.js Using Require Add Express App Routes": {
+    "prefix": "aaAddAppRoutes",
+    "body": [
+      "const express = require('express');",
+      "const path = require('path');",
+      "const indexRouter = require('./modules/index.router.js');",
+      "",
+      "function appRoutes(app) {",
+      "\tapp.use(express.json());",
+      "\tapp.use('/uploads', express.static(path.join(__dirname, './uploads')));",
+      "\tapp.use(process.env.CHANNEL + '/auth', indexRouter.authRouter);",
+      "}",
+      "",
+      "module.exports = appRoutes;"
+    ],
+    "description": "Node.js Using Require Add Express App Routes"
+  },
+
+  // aaAddIndexRouter
+  "Node.js Using Import Add Index Router": {
+    "prefix": "aaAddIndexRouter",
+    "body": ["export { default as ${1:controller}Router } from './${1:controller}/${1:controller}.router.js';"],
+    "description": "Node.js Using Import Add Index Router"
+  },
+  "Node.js Using Require Add Index Router": {
+    "prefix": "aaAddIndexRouter",
+    "body": ["module.exports.${1:controller}Router = require('./${1:controller}/${1:controller}.router.js');"],
+    "description": "Node.js Using Require Add Index Router"
+  },
+
+  // aaAddCors
+  "Node.js Using Import Add CORS": {
+    "prefix": "aaAddCors",
+    "body": [
+      "import cors from 'cors';",
+      "",
+      "export default function runningCors(app) {",
+      "const corsOptions = {",
+      "origin: ['http://localhost:3000'],",
+      "optionsSuccessStatus: 200, // For legacy browser support",
+      " };",
+      "",
+      "app.use(cors(corsOptions)); ",
+      "};"
+    ],
+    "description": "Node.js Using Import Add CORS"
+  },
+  "Node.js Using Require Add CORS": {
+    "prefix": "aaAddCors",
+    "body": [
+      "const cors = require('cors');",
+      "",
+      "function runningCors(app) {",
+      "const corsOptions = {",
+      "origin: ['http://localhost:3000'],",
+      "optionsSuccessStatus: 200, // For legacy browser support",
+      " };",
+      "",
+      "app.use(cors(corsOptions)); ",
+      "};",
+      "module.exports = runningCors;"
+    ],
+    "description": "Node.js Using Require Add CORS"
+  }
+}
